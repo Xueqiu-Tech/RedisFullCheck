@@ -100,7 +100,7 @@ func main() {
 		common.BigKeyThreshold = conf.Opts.BigKeyThreshold
 	}
 
-	sourceAddressList, err := client.HandleAddress(conf.Opts.SourceAddr, conf.Opts.SourcePassword, conf.Opts.SourceAuthType)
+	sourceAddressList, err := client.HandleAddress(conf.Opts.SourceAddr, conf.Opts.SourcePassword, conf.Opts.SourceAuthType, conf.Opts.SourceDBType)
 	if err != nil {
 		panic(common.Logger.Errorf("source address[%v] illegal[%v]", conf.Opts.SourceAddr, err))
 	} else if len(sourceAddressList) > 1 && conf.Opts.SourceDBType != 1 {
@@ -109,11 +109,11 @@ func main() {
 		panic(common.Logger.Errorf("input source address is empty"))
 	}
 
-	targetAddressList, err := client.HandleAddress(conf.Opts.TargetAddr, conf.Opts.TargetPassword, conf.Opts.TargetAuthType)
+	targetAddressList, err := client.HandleAddress(conf.Opts.TargetAddr, conf.Opts.TargetPassword, conf.Opts.TargetAuthType, conf.Opts.TargetDBType)
 	if err != nil {
 		panic(common.Logger.Errorf("target address[%v] illegal[%v]", conf.Opts.TargetAddr, err))
-	} else if len(targetAddressList) > 1 && conf.Opts.TargetDBType != 1 {
-		panic(common.Logger.Errorf("looks like the target is cluster? please set targetdbtype"))
+	} else if len(targetAddressList) > 1 && (conf.Opts.TargetDBType != 1 || conf.Opts.TargetDBType != 4) {
+		panic(common.Logger.Errorf("looks like the target is cluster or client sharding? please set targetdbtype to 1 or 4"))
 	} else if len(targetAddressList) == 0 {
 		panic(common.Logger.Errorf("input target address is empty"))
 	}

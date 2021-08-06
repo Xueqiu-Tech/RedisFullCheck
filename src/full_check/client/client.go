@@ -38,6 +38,27 @@ func (p RedisHost) IsCluster() bool {
 	return p.DBType == common.TypeCluster
 }
 
+func (p RedisHost) IsSource() bool {
+	return p.Role == "source"
+}
+
+func (p RedisHost) IsTarget() bool {
+	return p.Role == "target"
+}
+
+// 当前仅支持target分片
+func (p RedisHost) IsTargetSharding() bool {
+	return p.DBType == common.TypeClientSharding && p.IsTarget()
+}
+
+func (p RedisHost) getTargetShardNumber() int {
+	if p.IsTargetSharding() {
+		return len(p.Addr)
+	} else {
+		return 0
+	}
+}
+
 type RedisClient struct {
 	redisHost RedisHost
 	db        int32
@@ -60,6 +81,39 @@ func NewRedisClient(redisHost RedisHost, db int32) (RedisClient, error) {
 		return RedisClient{}, fmt.Errorf("ping return invaild[%v]", ret)
 	}
 	return rc, err
+}
+
+// only client sharding(DBType == TypeClientSharding) could use this function
+func NewRedisClientList(redisHost RedisHost, db int32) ([]RedisClient, error) {
+	var redisClientList []RedisClient
+
+	if redisHost.IsTargetSharding() {
+		for _, addr := range redisHost.Addr {
+			newRedisHost := RedisHost {
+				Addr:         []string{addr},
+				Password:     redisHost.Password,
+				TimeoutMs:    redisHost.TimeoutMs,
+				Role:         redisHost.Role,
+				Authtype:     redisHost.Authtype,
+				DBType:       redisHost.DBType,
+				DBFilterList: redisHost.DBFilterList,
+			}
+			redisClient, err := NewRedisClient(newRedisHost, db)
+			if err != nil {
+				panic(common.Logger.Errorf("create redis client with host[%v] db[%v] error[%v]", newRedisHost, 0, err))
+			}
+			redisClientList = append(redisClientList, redisClient)
+		}
+	} else {
+		// redis 2.8 standalone or redis cluster
+		redisClient, err := NewRedisClient(redisHost, db)
+		if err != nil {
+			panic(common.Logger.Errorf("create redis client with host[%v] db[%v] error[%v]", redisHost, db, err))
+		}
+		redisClientList = append(redisClientList, redisClient)
+	}
+
+	return redisClientList, nil
 }
 
 func (p *RedisClient) CheckHandleNetError(err error) bool {

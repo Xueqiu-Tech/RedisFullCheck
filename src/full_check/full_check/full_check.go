@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
-	"full_check/common"
-	"full_check/metric"
 	"full_check/checker"
-	"full_check/configure"
 	"full_check/client"
+	"full_check/common"
+	"full_check/configure"
+	"full_check/metric"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -386,6 +386,28 @@ CREATE TABLE IF NOT EXISTS %s(
 	}
 }
 
+func (p *FullCheck) generateMultiTaskForTarget(keyInfo []*common.Key, conflictKey chan<- *common.Key,
+	sourceClient client.RedisClient, targetClientList []client.RedisClient) {
+	shardSize := len(targetClientList)
+	if shardSize > 1 {
+		tasks := make([][]*common.Key, shardSize)
+
+		for _, key := range keyInfo {
+			shardId, err := common.GetShardIndex(key.Key, shardSize)
+			if err != nil {
+				panic(common.Logger.Errorf("sharding key [%v] failed, shardSize[%v] error[%v]", key.Key, err))
+			}
+			tasks[shardId] = append(tasks[shardId], key)
+		}
+
+		for shardId, shardedKeyInfo := range tasks {
+			go p.verifier.VerifyOneGroupKeyInfo(shardedKeyInfo, conflictKey, &sourceClient, &targetClientList[shardId])
+		}
+	} else {
+		p.verifier.VerifyOneGroupKeyInfo(keyInfo, conflictKey, &sourceClient, &targetClientList[0])
+	}
+}
+
 func (p *FullCheck) VerifyAllKeyInfo(allKeys <-chan []*common.Key, conflictKey chan<- *common.Key) {
 	sourceClient, err := client.NewRedisClient(p.SourceHost, p.currentDB)
 	if err != nil {
@@ -394,18 +416,20 @@ func (p *FullCheck) VerifyAllKeyInfo(allKeys <-chan []*common.Key, conflictKey c
 	}
 	defer sourceClient.Close()
 
-	targetClient, err := client.NewRedisClient(p.TargetHost, p.currentDB)
+	targetClientList, err := client.NewRedisClientList(p.TargetHost, p.currentDB)
 	if err != nil {
 		panic(common.Logger.Errorf("create redis client with host[%v] db[%v] error[%v]",
 			p.TargetHost, p.currentDB, err))
 	}
-	defer targetClient.Close()
+	for _, targetClient := range targetClientList {
+		defer targetClient.Close()
+	}
 
 	// limit qps
 	qos := common.StartQoS(conf.Opts.Qps)
 	for keyInfo := range allKeys {
 		<-qos.Bucket
-		p.verifier.VerifyOneGroupKeyInfo(keyInfo, conflictKey, &sourceClient, &targetClient)
+		p.generateMultiTaskForTarget(keyInfo, conflictKey, sourceClient, targetClientList)
 	} // for oneGroupKeys := range allKeys
 
 	qos.Close()

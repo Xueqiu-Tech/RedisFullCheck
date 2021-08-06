@@ -16,6 +16,7 @@ const (
 	TypeCluster      = 1
 	TypeAliyunProxy  = 2 // aliyun proxy
 	TypeTencentProxy = 3 // tencent cloud proxy
+	TypeClientSharding = 4 // 基于Redis 2.8的客户端分片
 
 	TypeMaster = "master"
 	TypeSlave  = "slave"

@@ -15,7 +15,7 @@ const (
 	RoleSlave  = "slave"
 )
 
-func HandleAddress(address, password, authType string) ([]string, error) {
+func HandleAddress(address, password, authType string, dbType int) ([]string, error) {
 	if strings.Contains(address, AddressSplitter) {
 		arr := strings.Split(address, AddressSplitter)
 		if len(arr) != 2 {
@@ -36,7 +36,7 @@ func HandleAddress(address, password, authType string) ([]string, error) {
 		return fetchNodeList(clusterList[0], password, authType, role)
 	} else {
 		clusterList := strings.Split(address, AddressClusterSplitter)
-		if len(clusterList) <= 1 {
+		if len(clusterList) <= 1 || dbType == 4 {
 			return clusterList, nil
 		}
 

@@ -9,7 +9,7 @@ var Opts struct {
 	TargetAddr         string `short:"t" long:"target" value-name:"TARGET"  description:"Set host:port of target redis. If db type is cluster, split by semicolon(;'), e.g., 10.1.1.1:1000;10.2.2.2:2000;10.3.3.3:3000. We also support auto-detection, so \"master@10.1.1.1:1000\" or \"slave@10.1.1.1:1000\" means choose master or slave. Only need to give a role in the master or slave."`
 	TargetPassword     string `short:"a" long:"targetpassword" value-name:"Password" description:"Set target redis password"`
 	TargetAuthType     string `long:"targetauthtype" value-name:"AUTH-TYPE" default:"auth" description:"useless for opensource redis, valid value:auth/adminauth" `
-	TargetDBType       int    `long:"targetdbtype" default:"0" description:"0: db, 1: cluster 2: aliyun proxy 3: tencent proxy"`
+	TargetDBType       int    `long:"targetdbtype" default:"0" description:"0: db, 1: cluster 2: aliyun proxy 3: tencent proxy 4: client sharding"`
 	TargetDBFilterList string `long:"targetdbfilterlist" default:"-1" description:"db white list that need to be compared, -1 means fetch all, \"0;5;15\" means fetch db 0, 5, and 15"`
 	ResultDBFile       string `short:"d" long:"db" value-name:"Sqlite3-DB-FILE" default:"result.db" description:"sqlite3 db file for store result. If exist, it will be removed and a new file is created."`
 	ResultFile         string `long:"result" value-name:"FILE" description:"store all diff result into the file, format is 'db\tdiff-type\tkey\tfield'"`
