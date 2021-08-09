@@ -112,7 +112,7 @@ func main() {
 	targetAddressList, err := client.HandleAddress(conf.Opts.TargetAddr, conf.Opts.TargetPassword, conf.Opts.TargetAuthType, conf.Opts.TargetDBType)
 	if err != nil {
 		panic(common.Logger.Errorf("target address[%v] illegal[%v]", conf.Opts.TargetAddr, err))
-	} else if len(targetAddressList) > 1 && (conf.Opts.TargetDBType != 1 || conf.Opts.TargetDBType != 4) {
+	} else if len(targetAddressList) > 1 && (conf.Opts.TargetDBType != 1 && conf.Opts.TargetDBType != 4) {
 		panic(common.Logger.Errorf("looks like the target is cluster or client sharding? please set targetdbtype to 1 or 4"))
 	} else if len(targetAddressList) == 0 {
 		panic(common.Logger.Errorf("input target address is empty"))

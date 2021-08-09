@@ -401,7 +401,7 @@ func (p *FullCheck) generateMultiTaskForTarget(keyInfo []*common.Key, conflictKe
 		}
 
 		for shardId, shardedKeyInfo := range tasks {
-			go p.verifier.VerifyOneGroupKeyInfo(shardedKeyInfo, conflictKey, &sourceClient, &targetClientList[shardId])
+			p.verifier.VerifyOneGroupKeyInfo(shardedKeyInfo, conflictKey, &sourceClient, &targetClientList[shardId])
 		}
 	} else {
 		p.verifier.VerifyOneGroupKeyInfo(keyInfo, conflictKey, &sourceClient, &targetClientList[0])
