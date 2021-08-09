@@ -83,7 +83,7 @@ func NewRedisClient(redisHost RedisHost, db int32) (RedisClient, error) {
 	return rc, err
 }
 
-// only client sharding(DBType == TypeClientSharding) could use this function
+// only should be used for target client, support 2.8/cluster/client sharding
 func NewRedisClientList(redisHost RedisHost, db int32) ([]RedisClient, error) {
 	var redisClientList []RedisClient
 
