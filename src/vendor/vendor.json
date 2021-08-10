@@ -43,6 +43,42 @@
 			"revisionTime": "2018-08-30T19:11:22Z"
 		},
 		{
+			"checksumSHA1": "IlDHv+GrkfH+xp1pdKzOqws1sLY=",
+			"path": "github.com/emirpasic/gods/containers",
+			"revision": "79df803e554cab06f835fb729064282b2fd4cc99",
+			"revisionTime": "2020-11-18T13:23:43Z"
+		},
+		{
+			"checksumSHA1": "XCPN+L39nz8L5qBMskCg0D3vK0s=",
+			"path": "github.com/emirpasic/gods/maps",
+			"revision": "79df803e554cab06f835fb729064282b2fd4cc99",
+			"revisionTime": "2020-11-18T13:23:43Z"
+		},
+		{
+			"checksumSHA1": "G89pmRaDt8Fwyi5ROASujymtF50=",
+			"path": "github.com/emirpasic/gods/maps/treemap",
+			"revision": "79df803e554cab06f835fb729064282b2fd4cc99",
+			"revisionTime": "2020-11-18T13:23:43Z"
+		},
+		{
+			"checksumSHA1": "EMOp3CuX8cfFbxn00GMEDOajyEQ=",
+			"path": "github.com/emirpasic/gods/trees",
+			"revision": "79df803e554cab06f835fb729064282b2fd4cc99",
+			"revisionTime": "2020-11-18T13:23:43Z"
+		},
+		{
+			"checksumSHA1": "blk9r2MDJpU46OEIj2Gv4Ujl6vA=",
+			"path": "github.com/emirpasic/gods/trees/redblacktree",
+			"revision": "79df803e554cab06f835fb729064282b2fd4cc99",
+			"revisionTime": "2020-11-18T13:23:43Z"
+		},
+		{
+			"checksumSHA1": "MlzoSungdUXIAmRdJ85lDQLW9OQ=",
+			"path": "github.com/emirpasic/gods/utils",
+			"revision": "79df803e554cab06f835fb729064282b2fd4cc99",
+			"revisionTime": "2020-11-18T13:23:43Z"
+		},
+		{
 			"checksumSHA1": "2UmMbNHc8FBr98mJFN1k8ISOIHk=",
 			"path": "github.com/garyburd/redigo/internal",
 			"revision": "9e66b83d15a259978be267d0b61838c42c3904e3",
@@ -121,5 +157,5 @@
 			"revisionTime": "2017-07-19T03:24:12Z"
 		}
 	],
-	"rootPath": "/home/op/tian/RedisFullCheck/src"
+	"rootPath": "/Users/zhantian/tian/sourceCode/RedisFullCheck/src"
 }

@@ -393,10 +393,7 @@ func (p *FullCheck) generateMultiTaskForTarget(keyInfo []*common.Key, conflictKe
 		tasks := make([][]*common.Key, shardSize)
 
 		for _, key := range keyInfo {
-			shardId, err := common.GetShardIndex(key.Key, shardSize)
-			if err != nil {
-				panic(common.Logger.Errorf("sharding key [%v] failed, shardSize[%v] error[%v]", key.Key, err))
-			}
+			shardId := p.TargetHost.ConsistentHash.GetShardIndex(key.Key)
 			tasks[shardId] = append(tasks[shardId], key)
 		}
 

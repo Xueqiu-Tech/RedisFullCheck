@@ -28,6 +28,7 @@ type RedisHost struct {
 	Authtype     string // "auth" or "adminauth"
 	DBType       int
 	DBFilterList map[int]struct{} // whitelist
+	ConsistentHash *common.ConsistentHashing // consistent hash that constructed with shard name
 }
 
 func (p RedisHost) String() string {

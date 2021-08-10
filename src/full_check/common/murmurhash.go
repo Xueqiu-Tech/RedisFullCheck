@@ -54,3 +54,7 @@ func MurmurHash64A(data []byte) (h int64) {
     h ^= int64(uint64(h) >> BIG_R)
     return
 }
+
+func MurmurHash(key string) (h int64) {
+	return MurmurHash64A([]byte(key))
+}

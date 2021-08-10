@@ -10,6 +10,7 @@ import (
 const (
 	AddressSplitter        = "@"
 	AddressClusterSplitter = ";"
+	ShardNameSplitter = ";"
 
 	RoleMaster = "master"
 	RoleSlave  = "slave"
@@ -80,5 +81,18 @@ func fetchNodeList(oneNode, password, authType, role string) ([]string, error) {
 		return nil, fmt.Errorf("fetch cluster node failed[%v]", err)
 	} else {
 		return addressList, nil
+	}
+}
+
+func HandleShard(shards string) ([]string, error) {
+	if len(shards) == 0 {
+		return nil, nil
+	}
+
+	if strings.Contains(shards, ShardNameSplitter) {
+		shardList := strings.Split(shards, ShardNameSplitter)
+		return shardList, nil
+	} else {
+		return nil, fmt.Errorf("wrong format, shard name must be split by " + ShardNameSplitter)
 	}
 }

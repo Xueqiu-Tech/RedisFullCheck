@@ -118,6 +118,20 @@ func main() {
 		panic(common.Logger.Errorf("input target address is empty"))
 	}
 
+	targetShardList, err := client.HandleShard(conf.Opts.TargetShards)
+	if err != nil {
+		panic(common.Logger.Errorf("target shard name[%v] illegal[%v]", conf.Opts.TargetShards, err))
+	} else if len(targetShardList) > 0 && conf.Opts.TargetDBType != 4 {
+		panic(common.Logger.Errorf("looks like the target is client sharding? please set targetdbtype to 4"))
+	} else if len(targetShardList) == 0 && conf.Opts.TargetDBType == 4 {
+		panic(common.Logger.Errorf("looks like the target is client sharding? please set targetshards"))
+	}
+	
+	consistentHash, err := common.NewConsistentHashing(targetShardList)
+	if err != nil {
+		panic(common.Logger.Errorf("target shard name[%v] illegal[%v]", conf.Opts.TargetShards, err))
+	}
+
 	// filter list
 	var filterTree *common.Trie
 	if len(conf.Opts.FilterList) != 0 {
@@ -155,6 +169,7 @@ func main() {
 			Authtype:     conf.Opts.TargetAuthType,
 			DBType:       conf.Opts.TargetDBType,
 			DBFilterList: common.FilterDBList(conf.Opts.TargetDBFilterList),
+			ConsistentHash:  consistentHash,
 		},
 		ResultDBFile: conf.Opts.ResultDBFile,
 		CompareCount: compareCount,
