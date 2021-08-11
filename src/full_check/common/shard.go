@@ -27,7 +27,7 @@ func abs(n int64) int64 {
 	return (n ^ y) - y
 }
 
-// Deprecated: Use GetShardIndex instead.
+// Deprecated: Use GetShard instead.
 func GetShardIndexOrig(key []byte, shardSize int) (int, error) {
 	if len(key) == 0 {
 		return 0, fmt.Errorf("key is empty")
@@ -59,20 +59,25 @@ func NewConsistentHashing(shardNameList []string) (*ConsistentHashing, error) {
 	return mappingAlgorithm, nil
 }
 
-func (p *ConsistentHashing) GetShardIndex(key []byte) int {
-	node, exist := p.nodes.Ceiling(MurmurHash64A(key))
-	if exist == false {
+func (p *ConsistentHashing) GetMinShard() ShardInfo {
+	_, min := p.nodes.Min()
+	return min.(ShardInfo)
+}
+
+func (p *ConsistentHashing) GetShard(key []byte) (int, string) {
+	_, node := p.nodes.Ceiling(MurmurHash64A(key))
+	if node == nil {
 		_, head := p.nodes.Min()
 		shardInfo, err := head.(ShardInfo)
-		if err == false {
+		if !err {
 			panic(Logger.Errorf("ShardInfo conversion error"))
 		}
-		return shardInfo.index
+		return shardInfo.index, shardInfo.name
 	}
 
 	shardInfo, err := node.(ShardInfo)
-	if err == false {
+	if !err {
 		panic(Logger.Errorf("ShardInfo conversion error"))
 	}
-	return shardInfo.index
+	return shardInfo.index, shardInfo.name
 }

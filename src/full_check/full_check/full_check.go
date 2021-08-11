@@ -393,7 +393,7 @@ func (p *FullCheck) generateMultiTaskForTarget(keyInfo []*common.Key, conflictKe
 		tasks := make([][]*common.Key, shardSize)
 
 		for _, key := range keyInfo {
-			shardId := p.TargetHost.ConsistentHash.GetShardIndex(key.Key)
+			shardId, _ := p.TargetHost.ConsistentHash.GetShard(key.Key)
 			tasks[shardId] = append(tasks[shardId], key)
 		}
 
