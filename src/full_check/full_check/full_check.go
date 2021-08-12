@@ -398,6 +398,11 @@ func (p *FullCheck) generateMultiTaskForTarget(keyInfo []*common.Key, conflictKe
 		}
 
 		for shardId, shardedKeyInfo := range tasks {
+			// 当前key列表，在分片内无数据
+			if len(shardedKeyInfo) == 0 {
+				common.Logger.Debugf("no key in current task, shardId %d", shardId)
+				continue
+			}
 			p.verifier.VerifyOneGroupKeyInfo(shardedKeyInfo, conflictKey, &sourceClient, &targetClientList[shardId])
 		}
 	} else {
